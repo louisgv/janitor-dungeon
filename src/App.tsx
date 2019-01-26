@@ -1,28 +1,44 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+import TwitchClient, { AccessToken } from 'twitch';
+
+import {clientId, clientSecret, clientRefreshToken, clientAccessToken} from './secret.json';
+import { isStreamLive } from './util';
+
+const KEY = {
+  REFRESH_TOKEN_CACHE: "REFRESH_TOKEN_CACHE",
+  ACCESS_TOKEN_CACHE: "ACCESS_TOKEN_CACHE"
+}
+
+const refreshToken = localStorage.getItem(KEY.REFRESH_TOKEN_CACHE) || clientRefreshToken;
+const accessToken = localStorage.getItem(KEY.ACCESS_TOKEN_CACHE) || clientAccessToken;
+
+const twitchInstance = TwitchClient.withCredentials(clientId, accessToken, {
+  clientSecret, 
+  refreshToken,
+  onRefresh: (token: AccessToken) => {
+    localStorage.setItem(KEY.REFRESH_TOKEN_CACHE, token.refreshToken);
+    localStorage.setItem(KEY.ACCESS_TOKEN_CACHE, token.accessToken);
   }
+});
+
+const App =()=> {
+
+  const [isOnline, setIsOnline] = useState(true);
+
+  const getIsOnline = async() => {
+    setIsOnline(await isStreamLive('louisgv', twitchInstance));
+  };
+
+  useEffect(()=>{
+    getIsOnline()
+  });
+
+  return (
+    <div>
+      Stream online: {isOnline ? "TRU" : "FAL"}
+    </div>
+  );
 }
 
 export default App;
