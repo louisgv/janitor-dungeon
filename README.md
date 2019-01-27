@@ -1,5 +1,8 @@
-## Janitor Dungeon
-Your home turf is being invaded by scary square thingy! Gather your community and battle them with engagement and more!
+## StreamWarming
+
+Are you a new streamer with 0 viewers? This exten
+
+As a new streamer, engaging viewer is a very difficult task. This game extension serves as a "housewarming" for new streamer, with a story. as a game is made to serve as 
 
 ## Diversifiers
 
@@ -14,9 +17,15 @@ Your home turf is being invaded by scary square thingy! Gather your community an
 
 ## Thank you OpenSource!
 + This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-+ react and TypeScript
++ react and CRA
++ TypeScript
++ https://electronjs.org/
 + twitch.js
 + react-shapes https://github.com/rsamec/react-shapes
 + yarn
 + nodejs
-+ npm
++ vscode
++ craco
++ https://github.com/wwlib/cra-craco-electron-example
++ https://www.npmjs.com/package/react-rainbow-components 
++ https://www.npmjs.com/package/react-rewards
