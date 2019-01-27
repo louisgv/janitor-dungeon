@@ -6,12 +6,14 @@ import HealthBar from "./components/HealthBar";
 import Monster from "./components/Monster";
 import styled from "styled-components";
 import Reward from "react-rewards";
-import { CirclesToRhombusesSpinner } from 'react-epic-spinners'
+import { CirclesToRhombusesSpinner } from "react-epic-spinners";
 
 import electron from "electron";
 
 const RewardContainer = styled.div`
   position: absolute;
+  width: 100vw;
+  height: 100vh;
 `;
 
 const Container = styled.div`
@@ -23,7 +25,7 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const App = ({onReward} : any) => {
+const App = ({ onReward }: any) => {
   const [isAlive, setIsAlive] = useState(false);
 
   const setIsAliveRef = useRef((event: Event, state: string) => {
@@ -32,7 +34,7 @@ const App = ({onReward} : any) => {
         setIsAlive(true);
         break;
       case "gameOver":
-      default:   
+      default:
         onReward();
         setIsAlive(false);
         break;
@@ -41,7 +43,7 @@ const App = ({onReward} : any) => {
 
   useEffect(() => {
     electron.ipcRenderer.on("app", setIsAliveRef.current);
-    
+
     return () => {
       // Clean up the subscription
       electron.ipcRenderer.removeListener("app", setIsAliveRef.current);
@@ -50,17 +52,21 @@ const App = ({onReward} : any) => {
 
   return (
     <>
-      {
-        isAlive 
-        ?
+      {isAlive ? (
         <>
           <Monster />
           <HealthBar />
         </>
-        :
-        <CirclesToRhombusesSpinner size={36} animationDuration={3600} className="" style={{}} color="black"/>
-      }
-      
+      ) : (
+        <CirclesToRhombusesSpinner
+          size={36}
+          animationDuration={3600}
+          className=""
+          style={{}}
+          color="black"
+        />
+      )}
+
       {/* <OnlineIndicator /> */}
       {/* <Game/> */}
     </>
@@ -70,21 +76,24 @@ const App = ({onReward} : any) => {
 export default class extends Component {
   rewardRef: any;
 
-  handleReward =()=> {
+  handleReward = () => {
     this.rewardRef.rewardMe();
-  }
+  };
 
   render() {
     return (
-    <Container>
-      <RewardContainer>
-        <Reward type="memphis" ref={(ref: any) => {
-            this.rewardRef = ref;
-            ref.rewardMe();
-          }}/>
-      </RewardContainer>
-      <App onReward={this.handleReward}/>
-    </Container>
-    )
+      <Container>
+        <RewardContainer>
+          <Reward
+            type="memphis"
+            ref={(ref: any) => {
+              this.rewardRef = ref;
+              ref.rewardMe();
+            }}
+          />
+        </RewardContainer>
+        <App onReward={this.handleReward} />
+      </Container>
+    );
   }
-};
+}

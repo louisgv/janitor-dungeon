@@ -114,6 +114,12 @@ async function initializeChatClient(mainWindow) {
 
       mainWindow.webContents.send("newMonster", gameData.monster);
 
+      const {level, shape} = gameData.monster;
+
+      const shapeString = SHAPES[shape];
+
+      chatClient.say(channel, `A Level ${level} ${shapeString} Appeared ! ! !`);    
+
       mainWindow.webContents.send("monsterHealthUpdate", {
         current: gameData.monster.currentHealth,
         max: gameData.monster.maxHealth
@@ -136,8 +142,21 @@ async function initializeChatClient(mainWindow) {
       }
 
       switch (message) {
+        case '!about':
+          chatClient.say(channel, `Engage with the chat to beat the ghost shape thingy, and help Louis gain more follower and subscriber!!!`);          
+          break;
+
         case '!raid':
+          chatClient.say(channel, `You hit an Easter Egg ! ! ! This feature will soon be implemented :P`);    
+
           // chatClient.say(channel, `@${user} is initiate a raid ! ! !`);    
+          break;
+
+        case '!secretRoom':
+          chatClient.say(channel, `@${user} found the secret room ! ! ! There's... NOTHING in it!`);    
+          break;
+
+        case '!about':
           break;
         case '!monsterInfo':
           const {level, shape} = gameData.monster;
@@ -152,6 +171,10 @@ async function initializeChatClient(mainWindow) {
           
           gameData.monster.currentHealth -= damageAmount;
 
+          if(damage > 180) {
+            chatClient.say(channel, `Holy cow @${user}! That's some CRITICAL damage you did there!!!`);      
+          }
+
           mainWindow.webContents.send("damageDealt", {
             damageAmount
           });
@@ -163,6 +186,12 @@ async function initializeChatClient(mainWindow) {
           
           if(gameData.monster.currentHealth <= 0) {
             mainWindow.webContents.send("app", "gameOver");
+
+            const {level, shape} = gameData.monster;
+
+            const shapeString = SHAPES[shape];
+  
+            chatClient.say(channel, `Very nice! @${user} just finished off that Level ${level} ${shapeString}! ! !`);
           }    
         }
       }
