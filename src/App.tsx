@@ -72,8 +72,7 @@ export default class extends Component {
     <Container>
         <Reward ref={(ref: any) => {
             this.rewardRef = ref;
-          }}
-         type='emoji'/>
+          }}/>
       <App onReward={this.handleReward}/>
     </Container>
     )
