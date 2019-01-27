@@ -6,8 +6,13 @@ import HealthBar from "./components/HealthBar";
 import Monster from "./components/Monster";
 import styled from "styled-components";
 import Reward from "react-rewards";
+import { CirclesToRhombusesSpinner } from 'react-epic-spinners'
 
 import electron from "electron";
+
+const RewardContainer = styled.div`
+  position: absolute;
+`;
 
 const Container = styled.div`
   width: 100vw;
@@ -25,10 +30,10 @@ const App = ({onReward} : any) => {
     switch (state) {
       case "newGame":
         setIsAlive(true);
-        onReward();
         break;
       case "gameOver":
-      default:  
+      default:   
+        onReward();
         setIsAlive(false);
         break;
     }
@@ -36,7 +41,6 @@ const App = ({onReward} : any) => {
 
   useEffect(() => {
     electron.ipcRenderer.on("app", setIsAliveRef.current);
-
     
     return () => {
       // Clean up the subscription
@@ -47,11 +51,14 @@ const App = ({onReward} : any) => {
   return (
     <>
       {
-        isAlive && 
+        isAlive 
+        ?
         <>
           <Monster />
           <HealthBar />
         </>
+        :
+        <CirclesToRhombusesSpinner size={36} animationDuration={3600} className="" style={{}} color="black"/>
       }
       
       {/* <OnlineIndicator /> */}
@@ -70,9 +77,12 @@ export default class extends Component {
   render() {
     return (
     <Container>
-        <Reward ref={(ref: any) => {
+      <RewardContainer>
+        <Reward type="memphis" ref={(ref: any) => {
             this.rewardRef = ref;
+            ref.rewardMe();
           }}/>
+      </RewardContainer>
       <App onReward={this.handleReward}/>
     </Container>
     )

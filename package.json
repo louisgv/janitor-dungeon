@@ -2,6 +2,7 @@
   "name": "janitor-dungeon",
   "version": "0.1.0",
   "private": true,
+  "license": "CC-BY-NC-SA-3.0",
   "main": "public/electron.js",
   "description": "Dungeon of the janitor... Help new streamer cleanup the demon lurking in their stream!",
   "author": {

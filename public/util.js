@@ -32,7 +32,7 @@ const DATA_MODEL = {
 
 // NEED TO DEBUG THIS ONE:
 function getMonsterHealth({lastHealth, followers, views, level}) {
-  return (followers + views + level * 999) + lastHealth * Math.E;
+  return (followers + views + level * 9) + lastHealth * Math.E;
 }
 
 async function initializeChatClient(mainWindow) {
@@ -60,14 +60,16 @@ async function initializeChatClient(mainWindow) {
   ])
 
   mainWindow.webContents.send("app", "newGame");
+  await chatClient.connect();
+
   mainWindow.webContents.send("newMonster", gameData.monster);
+  await chatClient.waitForRegistration();
+  
   mainWindow.webContents.send("monsterHealthUpdate", {
     current: gameData.monster.currentHealth,
     max: gameData.monster.maxHealth
   });
 
-  await chatClient.connect();
-  await chatClient.waitForRegistration();
   await chatClient.join(username);
 
   // Single point of writing to file
@@ -111,6 +113,11 @@ async function initializeChatClient(mainWindow) {
       gameData.monster.shape = getMonsterShape(level);
 
       mainWindow.webContents.send("newMonster", gameData.monster);
+
+      mainWindow.webContents.send("monsterHealthUpdate", {
+        current: gameData.monster.currentHealth,
+        max: gameData.monster.maxHealth
+      });
     }
     
     await fs.writeJSON(DATA_PATH, gameData, {spaces: '\t'});
@@ -131,6 +138,11 @@ async function initializeChatClient(mainWindow) {
       switch (message) {
         case '!raid':
           // chatClient.say(channel, `@${user} is initiate a raid ! ! !`);    
+          break;
+        case '!monsterInfo':
+          const {level, shape} = gameData.monster;
+          const shapeString = SHAPES[shape];
+          chatClient.say(channel, `It is a Level ${level} ${shapeString} ! ! !`);    
           break;
       
         default:{
