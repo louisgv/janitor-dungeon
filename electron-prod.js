@@ -1,7 +1,7 @@
 const electron = require("electron");
 const path = require("path"); // Module to control application life.
 
-const {initializeChatClient} = require("./util");
+const { initializeChatClient } = require("./util");
 
 const app = electron.app;
 // Module to create native browser window.
@@ -16,7 +16,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: { nodeIntegration: true }
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   // and load the index.html of the app.

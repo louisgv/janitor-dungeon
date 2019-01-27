@@ -1,6 +1,6 @@
 const electron = require("electron");
 const path = require("path");
-const {initializeChatClient} = require("./util");
+const { initializeChatClient } = require("./util");
 
 // Module to control application life.
 const app = electron.app;
@@ -13,13 +13,14 @@ let mainWindow;
 
 console.log(__dirname);
 
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
-    webPreferences: { nodeIntegration: true }
+    webPreferences: { 
+      nodeIntegration: true 
+    }
   });
 
   // and load the index.html of the app.
@@ -29,9 +30,9 @@ function createWindow() {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  mainWindow.webContents.on('did-finish-load', ()=> {
+  mainWindow.webContents.on("did-finish-load", () => {
     initializeChatClient(mainWindow);
-  })
+  });
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {
@@ -46,8 +47,6 @@ function createWindow() {
     mainWindow.destroy();
     createWindow();
   });
-
-  
 }
 
 // This method will be called when Electron has finished
