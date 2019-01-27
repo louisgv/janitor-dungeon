@@ -2,13 +2,14 @@
   "name": "janitor-dungeon",
   "version": "0.1.0",
   "private": true,
-  "main": "electron.ts",
+  "main": "electron-prod.js",
   "homepage": "./",
   "dependencies": {
     "@types/jest": "23.3.13",
     "@types/node": "10.12.18",
     "@types/react": "16.7.21",
     "@types/react-dom": "16.0.11",
+    "fs-extra": "^7.0.1",
     "react": "^16.8.0-alpha.1",
     "react-dom": "^16.8.0-alpha.1",
     "react-epic-spinners": "^0.2.1",
@@ -25,7 +26,7 @@
     "start": "concurrently \"yarn watch:electron\" \"yarn start:electron-dev\"",
     "start:web": "env-cmd .env.web craco start --config craco.config.web.js",
     "start:electron": "electron .",
-    "start:electron-dev": "electron electron-dev.ts",
+    "start:electron-dev": "electron electron-dev.js",
     "build": "yarn build:electron",
     "build:web": "craco build --config craco.config.web.js",
     "build:electron": "env-cmd .env.electron craco build --config craco.config.electron.js",
@@ -36,7 +37,7 @@
     "dist": "electron-builder"
   },
   "watch": {
-    "build:electron": "src/**/*.*"
+    "build:electron": ["src/**/*.*", "./*.js"]
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -1,5 +1,7 @@
-import electron from "electron";
-import fs from "fs";
+const electron = require("electron");
+const path = require("path");
+const {initializeChatClient} = require("./util");
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -9,71 +11,8 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-import path from "path";
-
-import { getTwitchClient, isStreamLive } from "./src/util";
-import ChatClient from "twitch-chat-client";
-import TwitchPrivateMessage from "twitch-chat-client/lib/StandardCommands/PrivateMessage";
-
 console.log(__dirname);
-console.log(process.env.NODE_ENV);
 
-function debounce(func, ms) {
-  let ts;
-  return function() {
-    clearTimeout(ts);
-    ts = setTimeout(() => func.apply(this, arguments), ms);
-  };
-}
-
-if (process.env.NODE_ENV !== "production") {
-  const watchPath = path.join(__dirname, "./build/static");
-
-  fs.watch(
-    watchPath,
-    { encoding: "buffer" },
-    debounce((eventType, filename) => {
-      const watchPathExists = fs.existsSync(watchPath);
-      console.log(`Reloading electron: ${watchPathExists}`);
-      if (watchPathExists) {
-        mainWindow.destroy();
-        createWindow();
-      }
-    }, 100)
-  );
-}
-
-async function initializeChatClient() {
-  const data = {
-    username: "louisgv",
-    twitchClient: getTwitchClient()
-  };
-
-  const isStreamOnline = await isStreamLive(data.username, data.twitchClient);
-
-  if (!isStreamOnline) {
-    return;
-  }
-
-  electron.ipcMain.emit('connected');
-
-  const chatClient = await ChatClient.forTwitchClient(data.twitchClient);
-
-  await chatClient.connect();
-  await chatClient.waitForRegistration();
-  await chatClient.join(data.username);
-
-  const messageListener = await chatClient.onPrivmsg(
-    (
-      channel: string,
-      user: string,
-      message: string,
-      msg: TwitchPrivateMessage
-    ) => {
-      electron.ipcMain.emit('message', {user, message});
-    }
-  );
-}
 
 function createWindow() {
   // Create the browser window.
@@ -89,6 +28,10 @@ function createWindow() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  mainWindow.webContents.on('did-finish-load', ()=> {
+    initializeChatClient(mainWindow);
+  })
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {

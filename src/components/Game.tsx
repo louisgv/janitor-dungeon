@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from "react";
-import electron from 'electron';
+import React, { useState, useEffect, useRef } from "react";
+import electron from "electron";
 
 export default () => {
+
   const [gameSession, setGameSession] = useState({ user: "", message: "" });
 
-  useEffect(() => {
-    electron.ipcRenderer.on('message', (data : any)=>{
-      setGameSession(data);
-    })
+  const setGameSessionRef = useRef((event: Event, data: any) => {
+    setGameSession(data);
   });
+
+  useEffect(() => {
+
+    electron.ipcRenderer.on("message", setGameSessionRef.current)
+  
+    return () => {
+      // Clean up the subscription
+      electron.ipcRenderer.removeListener("message", setGameSessionRef.current)
+    };
+  });
+  
+
+
 
   return (
     <div>
