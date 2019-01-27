@@ -2,7 +2,13 @@
   "name": "janitor-dungeon",
   "version": "0.1.0",
   "private": true,
-  "main": "electron-prod.js",
+  "main": "public/electron.js",
+  "description": "Dungeon of the janitor... Help new streamer cleanup the demon lurking in their stream!",
+  "author": {
+    "name": "L",
+    "email": "lgvichy@gmail.com",
+    "url": "https://louisgv.ga"
+  },
   "homepage": "./",
   "dependencies": {
     "@types/jest": "23.3.13",
@@ -37,7 +43,7 @@
     "dist": "electron-builder"
   },
   "watch": {
-    "build:electron": ["src/**/*.*", "./*.js"]
+    "build:electron": ["src/**/*.*"]
   },
   "eslintConfig": {
     "extends": "react-app"

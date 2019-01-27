@@ -1,6 +1,6 @@
 const electron = require("electron");
 const path = require("path");
-const { initializeChatClient } = require("./util");
+const { initializeChatClient } = require("./public/util");
 
 // Module to control application life.
 const app = electron.app;

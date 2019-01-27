@@ -1,3 +1,5 @@
+const electron = require("electron");
+
 const TwitchClient = require("twitch").default;
 
 const fs = require("fs-extra");
@@ -38,36 +40,41 @@ async function initializeChatClient(mainWindow) {
 }
 
 async function getTwitchClient() {
-  const secret = await fs.readJSON(SECRET_PATH);
+  try {
+    const secret = await fs.readJSON(SECRET_PATH);
 
-  // console.log(JSON.stringify(file));
-
-  const {
-    clientId,
-    clientSecret,
-    clientRefreshToken,
-    clientAccessToken
-  } = secret;
-
-  const refreshToken = clientRefreshToken;
-  const accessToken = clientAccessToken;
-
-  const twitchClient = TwitchClient.withCredentials(clientId, accessToken, {
-    clientSecret,
-    refreshToken,
-    onRefresh: token => {
-      secret.clientAccessToken = token.accessToken;
-      secret.clientRefreshToken = token.refreshToken;
-
-      fs.writeJson(SECRET_PATH, secret);
-
-      console.log("CREDENETIAL REFRESHED ---------------------------");
-    }
-  });
-
-  return {
-    secret,
-    twitchClient
+    // console.log(JSON.stringify(file));
+  
+    const {
+      clientId,
+      clientSecret,
+      clientRefreshToken,
+      clientAccessToken
+    } = secret;
+  
+    const refreshToken = clientRefreshToken;
+    const accessToken = clientAccessToken;
+  
+    const twitchClient = TwitchClient.withCredentials(clientId, accessToken, {
+      clientSecret,
+      refreshToken,
+      onRefresh: token => {
+        secret.clientAccessToken = token.accessToken;
+        secret.clientRefreshToken = token.refreshToken;
+  
+        fs.writeJson(SECRET_PATH, secret);
+  
+        console.log("CREDENETIAL REFRESHED ---------------------------");
+      }
+    });
+  
+    return {
+      secret,
+      twitchClient
+    }    
+  } catch (error) {
+      electron.dialog.showErrorBox("SECRET FILE INVALID!", error.message);
+      electron.app.quit(); 
   }
 }
 
