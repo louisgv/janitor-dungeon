@@ -97,9 +97,9 @@ async function initializeChatClient(mainWindow) {
       console.log(channelData.followers);
       console.log(channelData.views);
 
-      const level = gameData.monster.level + 1;
+      const nextLevel = gameData.monster.level + 1;
       const newHealth = getMonsterHealth({
-        level,
+        level: nextLevel,
         lastHealth: gameData.monster.maxHealth,
         followers: channelData.followers,
         views: channelData.views
@@ -107,18 +107,14 @@ async function initializeChatClient(mainWindow) {
 
       console.log(newHealth)
 
-      gameData.monster.level = level;
+      gameData.monster.level = nextLevel;
       gameData.monster.currentHealth = newHealth;
       gameData.monster.maxHealth = newHealth;
-      gameData.monster.shape = getMonsterShape(level);
+      gameData.monster.shape = getMonsterShape(nextLevel);
 
       mainWindow.webContents.send("newMonster", gameData.monster);
 
-      const {level, shape} = gameData.monster;
-
-      const shapeString = SHAPES[shape];
-
-      chatClient.say(channel, `A Level ${level} ${shapeString} Appeared ! ! !`);    
+      chatClient.say(channel, `A Level ${nextLevel} ${SHAPES[gameData.monster.shape]} Appeared ! ! !`);    
 
       mainWindow.webContents.send("monsterHealthUpdate", {
         current: gameData.monster.currentHealth,
@@ -152,16 +148,12 @@ async function initializeChatClient(mainWindow) {
           // chatClient.say(channel, `@${user} is initiate a raid ! ! !`);    
           break;
 
-        case '!secretRoom':
-          chatClient.say(channel, `@${user} found the secret room ! ! ! There's... NOTHING in it!`);    
+        case '!janitor-closet':
+          chatClient.say(channel, `@${user} found the secret room ! ! ! Inside is . . . a BLACK DAGGER?!`);    
           break;
 
-        case '!about':
-          break;
         case '!monsterInfo':
-          const {level, shape} = gameData.monster;
-          const shapeString = SHAPES[shape];
-          chatClient.say(channel, `It is a Level ${level} ${shapeString} ! ! !`);    
+          chatClient.say(channel, `It is a Level ${gameData.monster.level} ${SHAPES[gameData.monster.shape]} ! ! !`);    
           break;
       
         default:{
@@ -171,7 +163,7 @@ async function initializeChatClient(mainWindow) {
           
           gameData.monster.currentHealth -= damageAmount;
 
-          if(damage > 180) {
+          if(damageAmount > 9000) {
             chatClient.say(channel, `Holy cow @${user}! That's some CRITICAL damage you did there!!!`);      
           }
 
@@ -186,12 +178,8 @@ async function initializeChatClient(mainWindow) {
           
           if(gameData.monster.currentHealth <= 0) {
             mainWindow.webContents.send("app", "gameOver");
-
-            const {level, shape} = gameData.monster;
-
-            const shapeString = SHAPES[shape];
   
-            chatClient.say(channel, `Very nice! @${user} just finished off that Level ${level} ${shapeString}! ! !`);
+            chatClient.say(channel, `Beast's down! @${user} just finished off that Level ${gameData.monster.level} ${SHAPES[gameData.monster.shape]}! ! !`);
           }    
         }
       }
